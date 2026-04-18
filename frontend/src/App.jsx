@@ -275,6 +275,23 @@ const AdminDashboard = () => (
   </div>
 );
 
+const VenueMap = ({ venue }) => (
+  <div className="rounded-xl overflow-hidden h-48 w-full mt-3" 
+       role="region" 
+       aria-label={`Map showing venue location: ${venue}`}>
+    <iframe
+      title={`Venue map for ${venue}`}
+      width="100%"
+      height="100%"
+      style={{border:0}}
+      loading="lazy"
+      allowFullScreen
+      referrerPolicy="no-referrer-when-downgrade"
+      src={`https://www.google.com/maps/embed/v1/search?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY || 'AIzaSyD-placeholder'}&q=${encodeURIComponent(venue)}`}
+    />
+  </div>
+);
+
 const AdminEvents = () => {
   const navigate = useNavigate();
   return (
@@ -294,6 +311,7 @@ const AdminEvents = () => {
                 <span className="badge-success shadow-none mb-3">Live Network</span>
                 <h3 className="font-extrabold text-xl dark:text-white dark:font-cyber">CodeYuva Delhi</h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1">10 April, NSUT Campus</p>
+                <VenueMap venue="NSUT Campus" />
              </div>
              <div className="p-3 rounded-xl bg-slate-50 dark:bg-black/50 dark:border dark:border-cyber-border text-brand-500 dark:text-cyber-primary group-hover:scale-110 transition-transform">
                <CalendarDays size={24} />

@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHpBM7wnmEEJwto3W_L7ozKV8kt1ALP2A",
@@ -15,6 +16,22 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
+export const messaging = getMessaging(app);
+
+// ── FCM Helpers ────────────────────────────────────────────────
+export const requestNotificationPermission = async () => {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+      });
+      return token;
+    }
+  } catch (error) {
+    console.error('FCM permission error:', error);
+  }
+};
 
 // ── Auth Helpers ────────────────────────────────────────────────
 
@@ -68,6 +85,25 @@ export const getEntries = async (eventId = 'default') => {
     console.error('[Firestore] getEntries error:', err.message);
     return [];
   }
+};
+
+// Real-time attendance listener
+export const listenToAttendance = (eventId, callback) => {
+  const attendanceRef = collection(db, 'events', eventId, 'attendance');
+  return onSnapshot(attendanceRef, (snapshot) => {
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(data);
+  });
+};
+
+// Save attendance to Firestore
+export const markAttendanceFirestore = async (eventId, userId, studentData) => {
+  const ref = doc(db, 'events', eventId, 'attendance', userId);
+  await setDoc(ref, {
+    ...studentData,
+    markedAt: new Date().toISOString(),
+    status: 'present'
+  });
 };
 
 export default app;
