@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusEvent | Gamified Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fef8e7',
+                            100: '#fdf0c0',
+                            200: '#fce386',
+                            300: '#faD040',
+                            400: '#f9aa0a',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            900: '#7c2d12',
+                        },
+                        cyber: {
+                            border: 'rgba(255, 255, 255, 0.1)',
+                            darker: '#0a0a0a',
+                            primary: '#f97316'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-[#0a0a0a] text-slate-800 dark:text-slate-300 font-cyber min-h-screen dark-grid-bg relative overflow-x-hidden transition-colors duration-500">
+    
+    <!-- Top Navigation Grid -->
+    <nav class="bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 relative z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+                <div class="w-10 h-10 border-2 border-brand-500 bg-brand-500/10 text-brand-500 flex items-center justify-center rounded-xl">NX</div>
+                <span>NEXUS<span class="text-brand-500">EVENT</span></span>
+            </h1>
+            <div class="flex items-center gap-6">
+                <button id="themeToggle" class="text-slate-500 hover:text-brand-500 p-2 border border-slate-200 rounded-full dark:border-white/10">🌓 Theme</button>
+                <div id="nav-menus" class="hidden flex items-center gap-6 border-l border-slate-200 dark:border-white/10 pl-6">
+                    <button id="nav-dashboard" class="text-sm font-bold text-slate-500 hover:text-brand-500 transition-colors uppercase">Data_Grid</button>
+                    <button id="nav-feature" class="text-sm font-bold text-slate-500 hover:text-brand-500 transition-colors uppercase">Access_Modules</button>
+                    <button id="logoutBtn" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition-colors text-xs uppercase">Disconnect</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 shrink-0 overflow-visible relative z-10" id="app-container">
+        
+        <!-- ======================= LOGIN VIEW ======================= -->
+        <div id="login-view" class="min-h-[70vh] flex flex-col items-center justify-center animate-fade-up">
+            <div class="w-full max-w-md p-10 cyber-card-elite text-center group">
+                <div class="w-20 h-20 bg-brand-100 text-brand-600 dark:bg-brand-500/20 dark:text-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-6 transform transition-transform group-hover:scale-105">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h2 class="text-3xl font-black mb-2 text-slate-900 dark:text-white">SYSTEM ACCESS</h2>
+                <p class="text-slate-500 font-mono text-sm mb-10 uppercase font-bold">Initialize Authorization Token</p>
+                <div class="space-y-4">
+                    <button onclick="app.login('student')" class="w-full py-4 glow-btn-pro rounded-xl text-sm uppercase">HACKER_NODE()</button>
+                    <button onclick="app.login('admin')" class="w-full py-4 bg-slate-100 dark:bg-[#111] dark:border dark:border-white/10 text-slate-900 dark:text-white font-bold rounded-xl text-sm uppercase hover:bg-slate-200">ADMIN_GATEWAY()</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= STUDENT DASHBOARD ======================= -->
+        <div id="student-view" class="hidden space-y-8 animate-fade-up pt-4 view-panel">
+            <div class="border-b border-slate-200 dark:border-white/10 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <div class="badge-tag bg-emerald-100 text-emerald-600 mb-2">VALID CHECKSUM</div>
+                    <h2 class="text-5xl font-black text-slate-900 dark:text-white uppercase">John Doe</h2>
+                </div>
+                <div class="px-6 py-4 cyber-card-elite">
+                   <div class="text-xs text-slate-500 font-mono font-bold uppercase mb-1">Clearance Level</div>
+                   <div class="text-xl font-black text-brand-600 dark:text-brand-500" id="stu-type">STANDARD_PROXY</div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- QR Entry Code -->
+                <div class="cyber-card-elite flex flex-col items-center justify-center text-center">
+                    <h3 class="font-black mb-6 text-xl text-slate-900 dark:text-white flex items-center gap-2">DIGITAL IDENTITY MATRIX</h3>
+                    <div id="qrcode" class="bg-white p-4 rounded-2xl shadow-lg border-2 border-brand-500/50"></div>
+                    <div class="mt-8 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/10 px-8 py-4 w-full max-w-sm rounded-xl">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Decryption Pin</p>
+                        <p class="font-mono text-3xl font-black tracking-widest text-slate-900 dark:text-white">491032</p>
+                    </div>
+                </div>
+
+                <!-- Live Trackers -->
+                <div class="space-y-6 flex flex-col">
+                    <div class="cyber-card-elite border-t-4 border-t-amber-500 relative overflow-hidden">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-1">Geo-Locked Coordinate</h3>
+                        <p class="text-5xl font-black text-slate-900 dark:text-white mt-2">B-42 <span class="text-base text-brand-500 font-mono tracking-widest font-normal">Arena Zero</span></p>
+                    </div>
+                    
+                    <div class="flex-1 cyber-card-elite border-t-4 border-t-emerald-500">
+                        <div class="flex items-center gap-6">
+                            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl">🍽️</div>
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-500 uppercase mb-1">Payload Status</h3>
+                                <p class="text-3xl font-black text-slate-900 dark:text-white" id="stu-food-status">QUEUE_STANDBY</p>
+                                <div class="badge-tag mt-2">AWAITING BATCH: ROW A</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= STUDENT PREMIUM NFC VIEW ======================= -->
+        <div id="student-feature-view" class="hidden space-y-8 animate-fade-up pt-4 view-panel">
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white uppercase">Premium Hardware Link</h1>
+            <p class="text-slate-500 font-bold max-w-2xl text-sm border-l-4 border-brand-500 pl-4 py-1">Authorize upgrade to a physical NFC smart card. Allows zero-delay hardware handshakes at entry gateways.</p>
+            
+            <div id="nfc-promo" class="w-full bg-gradient-to-r from-orange-400 to-brand-600 p-[2px] rounded-2xl cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all" onclick="app.purchaseNFC()">
+                <div class="bg-white dark:bg-[#111] rounded-[15px] p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="relative z-10 w-full">
+                        <div class="badge-tag mb-4 shadow border border-brand-500/20">CREDIT: 78 (VALID)</div>
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 flex items-center gap-3">UNLOCK TITANIUM NFC PASS ✨</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                            <div class="font-bold text-sm text-slate-600 dark:text-slate-300"><span class="text-brand-500">✓</span> 2X Gate Bypass Speed</div>
+                            <div class="font-bold text-sm text-slate-600 dark:text-slate-300"><span class="text-brand-500">✓</span> Front-Row Access Overrides</div>
+                        </div>
+                    </div>
+                    <div class="text-center p-6 border-l border-slate-200 dark:border-white/10 w-full md:w-auto">
+                        <div class="px-8 py-4 glow-btn-pro text-white font-black rounded-xl mb-2">DEPLOY_ID [₹299]</div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">One-Time Protocol</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="nfc-card-view" class="hidden flex flex-col items-center">
+                <div class="relative w-[340px] h-[540px] perspective-1000 group">
+                    <div class="w-full h-full transform-style-3d transition-transform duration-1000 group-hover:rotate-y-180">
+                        
+                        <!-- Card Front -->
+                        <div class="absolute inset-0 backface-hidden bg-[#050508] text-white rounded-[2rem] border-4 border-slate-800 overflow-hidden flex flex-col items-center shadow-2xl">
+                            <div class="absolute top-0 w-[100%] h-[180px] bg-gradient-to-b from-brand-600 to-amber-500 rounded-b-[50%] flex justify-center items-end pb-8">
+                               <span class="font-black text-2xl text-white">NEXUS EVENT</span>
+                            </div>
+
+                            <div class="absolute top-6 right-6 flex items-center gap-1 opacity-90 text-white z-20">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="animate-pulse">
+                                    <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2.5 16.5C4 15 6 14.5 8 15"/><path d="M2 20.5C5 18 8 18 11 20"/>
+                                </svg>
+                            </div>
+
+                            <div class="mt-[130px] w-28 h-28 rounded-full border-4 border-[#050508] bg-slate-800 overflow-hidden flex items-center justify-center z-20">
+                                <img src="https://ui-avatars.com/api/?name=John+Doe&background=0a0a0a&color=f97316&size=150&bold=true" alt="Avatar"/>
+                            </div>
+                            
+                            <div class="mt-8 text-center px-8 z-20 w-full">
+                                <h3 class="text-3xl font-black mb-1">John Doe</h3>
+                                <p class="text-brand-400 font-bold uppercase text-xs mb-8">Titanium Proxy V1</p>
+                                <div class="w-full bg-white/10 p-3 rounded-lg"><p class="text-xl font-mono font-bold tracking-widest">NEX-9981-XX</p></div>
+                            </div>
+                        </div>
+
+                        <!-- Card Back -->
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 bg-[#111] text-white rounded-[2rem] border-4 border-slate-800 overflow-hidden flex flex-col items-center justify-center shadow-2xl p-8">
+                            <h4 class="text-slate-400 font-bold uppercase text-sm mb-6 border-b border-white/10 pb-4 w-full text-center">AUTHENTICATION</h4>
+                            <div class="bg-white p-4 rounded-xl mb-8"><div id="nfc-qr-back"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= ADMIN DASHBOARD ======================= -->
+        <div id="admin-view" class="hidden space-y-8 animate-fade-up pt-4 view-panel">
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white uppercase mb-8">Attendance Scanner</h1>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Scanner -->
+                <div class="lg:col-span-1 cyber-card-elite flex flex-col items-center justify-center p-8 bg-slate-50 dark:bg-[#0a0a0a] border-dashed border-2">
+                    <div class="w-48 h-48 border-4 border-brand-500 rounded relative mb-8 flex items-center justify-center bg-white dark:bg-[#111]">
+                        <div class="absolute w-full h-1 bg-brand-500 top-0 animate-ping opacity-50"></div>
+                        <span class="text-slate-400 font-bold uppercase text-xs text-center px-4">Place User QR in frame</span>
+                    </div>
+                    <button onclick="app.simScan()" class="w-full py-4 glow-btn-pro rounded-xl font-black text-sm uppercase">FORCE_OVERRIDE_SCAN()</button>
+                    <p class="text-center text-slate-400 text-[10px] uppercase font-bold mt-4">Simulates API response from Gateway</p>
+                </div>
+                
+                <!-- Metrics -->
+                <div class="lg:col-span-2 flex flex-col gap-6">
+                    <div class="w-full h-32 cyber-card-elite border-l-4 border-l-brand-500 flex items-center justify-between p-8">
+                        <div>
+                            <h3 class="text-xs text-slate-500 font-bold uppercase mb-1">Gate 1 Verifications</h3>
+                            <div class="badge-tag">SYNCED</div>
+                        </div>
+                        <div class="text-7xl font-black text-slate-900 dark:text-white" id="att-count">0</div>
+                    </div>
+                    
+                    <div class="flex-1 cyber-card-elite p-0 bg-white dark:bg-[#111] flex flex-col" style="height: 300px;">
+                        <div class="p-4 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-[#222]"><h3 class="font-bold text-slate-800 dark:text-white text-sm uppercase">Gateway Audit Log</h3></div>
+                        <div class="flex-1 overflow-y-auto p-4 space-y-2 text-sm text-slate-600 dark:text-slate-400 font-mono" id="logs">
+                            <div class="text-center opacity-50 py-10" id="empty-log">Awaiting Initial Scan Ping...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================= ADMIN FOOD VIEW ======================= -->
+        <div id="admin-feature-view" class="hidden space-y-8 animate-fade-up pt-4 view-panel">
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white uppercase mb-8">Food Array Distro</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Action Core -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="cyber-card-elite p-6 border-t-4 border-t-emerald-500 flex flex-col justify-center items-center text-center">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2">Global Meals Served</h3>
+                        <div class="text-7xl font-black text-slate-900 dark:text-white mb-2" id="total-meals">0</div>
+                    </div>
+                    <button id="inject-btn" onclick="app.serveFood()" class="w-full py-5 glow-btn-pro rounded-xl font-black text-sm transition-all hover:scale-[1.02]">INJECT_SCAN_EVENT()</button>
+                    
+                    <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-lg">
+                         <h4 class="text-red-700 dark:text-red-400 font-bold text-sm mb-1 uppercase">Strict Logic Locked</h4>
+                         <p class="text-xs text-red-600 dark:text-red-300 font-bold opacity-80">Cannot distribute more meals than recorded attendances in Gateway Log. Will auto-disable when capacity met.</p>
+                    </div>
+                </div>
+
+                <!-- Matrix Status -->
+                <div class="lg:col-span-2 cyber-card-elite p-6 bg-slate-50 dark:bg-[#111]">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white uppercase mb-6 flex justify-between">
+                        <span>Batch Flow Status</span>
+                        <span class="text-slate-400">10 Seats / Row</span>
+                    </h3>
+                    <div id="batch-container" class="space-y-4"></div>
+                    <div class="mt-8 flex gap-6 border-t border-slate-200 dark:border-white/10 pt-6">
+                        <div class="flex-1"><h4 class="text-xs text-slate-500 font-bold uppercase mb-1">Active Flow</h4><p class="text-xl font-black text-brand-500" id="debug-active">-</p></div>
+                        <div class="flex-1"><h4 class="text-xs text-slate-500 font-bold uppercase mb-1">Standby Row</h4><p class="text-xl font-black text-amber-500" id="debug-standby">-</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script src="script.js?v=4"></script>
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', () => {
+             document.documentElement.classList.toggle('dark');
+        });
+    </script>
+</body>
+</html>

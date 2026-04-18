@@ -13,6 +13,33 @@ import jwt from 'jsonwebtoken';
 dotenv.config();
 const { Pool } = pkg;
 
+import { Storage } from '@google-cloud/storage';
+
+const storage = new Storage({
+  projectId: process.env.GOOGLE_CLOUD_PROJECT || 'nexus-event-system',
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS || './serviceAccountKey.json'
+});
+
+const bucket = storage.bucket(process.env.GCS_BUCKET || 'nexus-event-storage');
+
+// Upload QR code to Google Cloud Storage
+export const uploadQRToStorage = async (userId, qrDataUrl) => {
+  try {
+    if (!qrDataUrl || !qrDataUrl.includes(',')) return null;
+    const fileName = `qr-codes/${userId}.png`;
+    const file = bucket.file(fileName);
+    const buffer = Buffer.from(qrDataUrl.split(',')[1], 'base64');
+    await file.save(buffer, {
+      metadata: { contentType: 'image/png' }
+    });
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    return publicUrl;
+  } catch (error) {
+    console.error('GCS upload error:', error.message);
+    return null;
+  }
+};
+
 // ==========================================
 // FIREBASE ADMIN SDK (Google Services)
 // ==========================================

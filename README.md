@@ -1,5 +1,10 @@
 # NexusEvent - Smart Event Management System
 
+![Cloud Build](https://storage.googleapis.com/nexus-event-storage/badges/build-passing.svg)
+![Firebase](https://img.shields.io/badge/Firebase-Auth-orange?logo=firebase)
+![Google Cloud](https://img.shields.io/badge/Google_Cloud-Run-blue?logo=googlecloud)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-green?logo=postgresql)
+
 An ultra-fast, offline-first digital event management terminal designed for Hackathons and massive conferences. Features zero-lag gate entry, automatic load-balancing seat allocation, food quota controls, and behavioral credit gamification.
 
 ## 🌟 Key Features
