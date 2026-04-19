@@ -143,6 +143,7 @@ const LandingPage = () => {
                      <p className="flex items-center gap-2"><span>📅</span> <strong>When:</strong> {ev.date}</p>
                      <p className="flex items-center gap-2"><span>⏰</span> <strong>Time:</strong> {ev.time}</p>
                   </div>
+                  <VenueMap venue={ev.location} />
                 </div>
               </div>
               <div className="p-6 bg-white dark:bg-black/40 mt-auto">
@@ -288,7 +289,7 @@ const VenueMap = ({ venue }) => (
       loading="lazy"
       allowFullScreen
       referrerPolicy="no-referrer-when-downgrade"
-      src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY || 'AIzaSyAMwUEKBJ7_aGD_jvS0ZzrU--wLFO5P2mE'}&q=${encodeURIComponent(venue)}&zoom=15`}
+      src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}&q=${encodeURIComponent(venue)}&zoom=15`}
     />
   </div>
 );

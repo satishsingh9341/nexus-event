@@ -16,11 +16,11 @@ const { Pool } = pkg;
 import { Storage } from '@google-cloud/storage';
 
 const storage = new Storage({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT || 'nexus-event-system',
+  projectId: process.env.GOOGLE_CLOUD_PROJECT,
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS || './serviceAccountKey.json'
 });
 
-const bucket = storage.bucket(process.env.GCS_BUCKET || 'nexus-event-storage');
+const bucket = storage.bucket(process.env.GCS_BUCKET);
 
 // Upload QR code to Google Cloud Storage
 export const uploadQRToStorage = async (userId, qrDataUrl) => {
@@ -45,8 +45,8 @@ export const uploadQRToStorage = async (userId, qrDataUrl) => {
 // ==========================================
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    projectId: process.env.FIREBASE_PROJECT_ID || 'nexus-event-system'
+    credential: admin.credential.cert('./serviceAccountKey.json'),
+    projectId: process.env.FIREBASE_PROJECT_ID
   });
 }
 
@@ -167,7 +167,7 @@ const requireAuth = (req, res, next) => {
   }
   try {
     const token = header.split(' ')[1];
-    req.user = jwt.verify(token, process.env.JWT_SECRET || 'nexus_jwt_secret');
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
@@ -215,6 +215,24 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 /**
+ * @route POST /api/storage/upload-qr
+ * @desc  Upload a generated QR DataURL to GCS
+ */
+app.post('/api/storage/upload-qr', requireAuth, async (req, res) => {
+  try {
+    const { userId, qrDataUrl } = req.body;
+    if (!userId || !qrDataUrl) {
+      return res.status(400).json({ error: 'userId and qrDataUrl are required' });
+    }
+    const publicUrl = await uploadQRToStorage(userId, qrDataUrl);
+    if (!publicUrl) return res.status(500).json({ error: 'GCS Upload failed' });
+    res.status(200).json({ message: 'Uploaded successfully', publicUrl });
+  } catch (err) {
+    res.status(500).json({ error: 'Server Error' });
+  }
+});
+
+/**
  * @route POST /api/auth/login
  * @desc  Login — returns signed JWT
  */
@@ -228,7 +246,7 @@ app.post('/api/auth/login', async (req, res) => {
     // Mock auth — replace with real DB lookup
     const token = jwt.sign(
       { email, role: 'student' },
-      process.env.JWT_SECRET || 'nexus_jwt_secret',
+      process.env.JWT_SECRET,
       { expiresIn: '8h' }
     );
     res.status(200).json({ token, role: 'student', expiresIn: '8h' });
