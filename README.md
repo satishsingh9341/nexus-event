@@ -2,6 +2,11 @@
 
 NexusEvent is a next-generation, high-performance event management system designed for hackathons and massive college-level tech fests. It completely modernizes physical entry tracking, food distribution, and real-time event analytics using the **Google Cloud and Firebase Ecosystem**.
 
+## 🏗️ Architecture
+
+- **Frontend:** UI formatting, interactions, and Tailwind Bento presentation logic limit.
+- **Backend (Simulated API Layer):** Abstracted business logic and payload verifications (`backend/api.js`).
+
 ---
 
 ## 🌟 Key Features & Rules

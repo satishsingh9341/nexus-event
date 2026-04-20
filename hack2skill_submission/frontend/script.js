@@ -3,6 +3,7 @@ import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "h
 import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
 import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-performance.js";
 import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-messaging.js";
+import { createEntry, assignSeat, processFood } from "../backend/api.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHpBM7wnmEEJwto3W_L7ozKV8kt1ALP2A",
@@ -133,6 +134,11 @@ window.app = {
         const time = new Date().toLocaleTimeString();
         
         try {
+            // Backend Layer Execution
+            const backendRes = createEntry("mock_user_" + Date.now());
+            const seatId = assignSeat(this.state.attendance + 1);
+            console.log(`[BACKEND SIMULATION] System logic executed: ${backendRes.message} | Computed Seat: ${seatId}`);
+
             await addDoc(collection(db, 'entries'), {
                 userId: "user_" + Date.now(),
                 type: "entry",
@@ -178,6 +184,11 @@ window.app = {
         }
         
         try {
+            // Simulated Backend Processing Layer
+            let batch = this.batches[activeIdx];
+            const backendFoodRes = processFood("user_" + Date.now(), batch.id);
+            console.log(`[BACKEND LOGIC EXECUTED] ${backendFoodRes.message}`);
+
             await addDoc(collection(db, 'food'), {
                 recordId: "food_" + Date.now(),
                 type: "food",
