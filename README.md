@@ -99,4 +99,14 @@ Instead of relying on heavy manual backend processes, NexusEvent intelligently r
 
 ---
 
+## 📈 Scalability
+
+- Designed for **large-scale crowd events** (1000+ simultaneous attendees).
+- Firestore `onSnapshot` handles real-time entries **without polling overhead**.
+- Food distribution uses a **batch matrix** that auto-promotes based on capacity thresholds.
+- Optimized for thousands of users using O(1) Set lookups — no database scans.
+- Cloud Run auto-scales horizontally with zero manual intervention.
+
+---
+
 *Designed and Developed for maximum usability, precision, and modern accessibility standards.*
