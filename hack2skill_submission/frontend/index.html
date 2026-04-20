@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusEvent | Gamified Portal</title>
+    <meta name="description" content="NexusEvent — Smart real-time event management with Firebase. Track entries, manage food distribution, and monitor attendance live.">
+    <title>NexusEvent | Smart Event Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -35,26 +36,28 @@
     </script>
 </head>
 <body class="bg-gradient-to-br from-[#F0F7FF] to-[#FFFFFF] dark:from-[#0f172a] dark:to-[#020617] text-slate-800 dark:text-slate-200 font-cyber min-h-screen relative overflow-x-hidden transition-colors duration-500">
+    <!-- Skip to main content — keyboard / screen reader accessibility -->
+    <a href="#app-container" class="skip-link">Skip to main content</a>
     
     <!-- Top Navigation Grid -->
-    <nav class="bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 relative z-50">
+    <nav aria-label="Main navigation" class="bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 relative z-50">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
-                <div class="w-10 h-10 border-2 border-brand-500 bg-brand-500/10 text-brand-500 flex items-center justify-center rounded-xl">NX</div>
+                <div class="w-10 h-10 border-2 border-brand-500 bg-brand-500/10 text-brand-500 flex items-center justify-center rounded-xl" aria-hidden="true">NX</div>
                 <span>NEXUS<span class="text-brand-500">EVENT</span></span>
             </h1>
             <div class="flex items-center gap-6">
-                <button id="themeToggle" class="text-slate-500 hover:text-brand-500 p-2 border border-slate-200 rounded-full dark:border-white/10">🌓 Theme</button>
+                <button id="themeToggle" aria-label="Toggle dark or light theme" class="text-slate-500 hover:text-brand-500 p-2 border border-slate-200 rounded-full dark:border-white/10">🌓 Theme</button>
                 <div id="nav-menus" class="hidden flex items-center gap-6 border-l border-slate-200 dark:border-white/10 pl-6">
-                    <button id="nav-dashboard" class="text-sm font-bold text-slate-500 hover:text-brand-500 transition-colors uppercase">Data_Grid</button>
-                    <button id="nav-feature" class="text-sm font-bold text-slate-500 hover:text-brand-500 transition-colors uppercase">Access_Modules</button>
-                    <button id="logoutBtn" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition-colors text-xs uppercase">Disconnect</button>
+                    <button id="nav-dashboard" aria-label="Go to attendance dashboard" class="text-sm font-bold text-slate-500 hover:text-brand-500 transition-colors uppercase">Data_Grid</button>
+                    <button id="nav-feature" aria-label="Go to feature module" class="text-sm font-bold text-slate-500 hover:text-brand-500 transition-colors uppercase">Access_Modules</button>
+                    <button id="logoutBtn" aria-label="Logout and disconnect session" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition-colors text-xs uppercase">Disconnect</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 shrink-0 overflow-visible relative z-10" id="app-container">
+    <main role="main" aria-label="NexusEvent application" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 shrink-0 overflow-visible relative z-10" id="app-container">
         
         <!-- ======================= LOGIN VIEW ======================= -->
         <div id="login-view" class="min-h-[70vh] flex flex-col items-center justify-center animate-fade-up">
@@ -64,9 +67,9 @@
                 </div>
                 <h2 class="text-3xl font-black mb-2 text-slate-900 dark:text-white">SYSTEM ACCESS</h2>
                 <p class="text-slate-500 font-mono text-sm mb-10 uppercase font-bold">Initialize Authorization Token</p>
-                <div class="space-y-4">
-                    <button onclick="app.login('student')" class="w-full py-4 glow-btn-pro rounded-xl text-sm uppercase">HACKER_NODE()</button>
-                    <button onclick="app.login('admin')" class="w-full py-4 bg-slate-100 dark:bg-[#111] dark:border dark:border-white/10 text-slate-900 dark:text-white font-bold rounded-xl text-sm uppercase hover:bg-slate-200">ADMIN_GATEWAY()</button>
+                <div class="space-y-4" role="group" aria-label="Login options">
+                    <button onclick="app.login('student')" aria-label="Login as Student" class="w-full py-4 glow-btn-pro rounded-xl text-sm uppercase">HACKER_NODE() — Student Login</button>
+                    <button onclick="app.login('admin')" aria-label="Login as Admin" class="w-full py-4 bg-slate-100 dark:bg-[#111] dark:border dark:border-white/10 text-slate-900 dark:text-white font-bold rounded-xl text-sm uppercase hover:bg-slate-200">ADMIN_GATEWAY() — Admin Login</button>
                 </div>
             </div>
         </div>
@@ -190,8 +193,8 @@
                         <div class="absolute w-full h-1 bg-brand-500 top-0 animate-ping opacity-50"></div>
                         <span class="text-slate-400 font-bold uppercase text-xs text-center px-4">Place User QR in frame</span>
                     </div>
-                    <button onclick="app.simScan()" class="w-full py-4 glow-btn-pro rounded-xl font-black text-sm uppercase">FORCE_OVERRIDE_SCAN()</button>
-                    <p class="text-center text-slate-400 text-[10px] uppercase font-bold mt-4">Simulates API response from Gateway</p>
+                    <button id="scan-btn" onclick="app.simScan()" aria-label="Simulate QR gate entry scan" class="w-full py-4 glow-btn-pro rounded-xl font-black text-sm uppercase">FORCE_OVERRIDE_SCAN()</button>
+                    <p class="text-center text-slate-400 text-[10px] uppercase font-bold mt-4" id="scan-status" role="status" aria-live="polite">Simulates API response from Gateway</p>
                 </div>
                 
                 <!-- Metrics -->
@@ -205,9 +208,9 @@
                     </div>
                     
                     <div class="flex-1 cyber-card-elite p-0 bg-white dark:bg-[#111] flex flex-col" style="height: 300px;">
-                        <div class="p-4 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-[#222]"><h3 class="font-bold text-slate-800 dark:text-white text-sm uppercase">Gateway Audit Log</h3></div>
-                        <div class="flex-1 overflow-y-auto p-4 space-y-2 text-sm text-slate-600 dark:text-slate-400 font-mono" id="logs">
-                            <div class="text-center opacity-50 py-10" id="empty-log">Awaiting Initial Scan Ping...</div>
+                        <div class="p-4 border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-[#222]"><h3 class="font-bold text-slate-800 dark:text-white text-sm uppercase" id="audit-log-label">Gateway Audit Log</h3></div>
+                        <div role="log" aria-live="polite" aria-label="Entry scan audit log" aria-labelledby="audit-log-label" class="flex-1 overflow-y-auto p-4 space-y-2 text-sm text-slate-600 dark:text-slate-400 font-mono" id="logs">
+                            <div class="text-center opacity-50 py-10" id="empty-log" aria-label="No entries yet">Awaiting Initial Scan Ping...</div>
                         </div>
                     </div>
                 </div>
@@ -225,10 +228,10 @@
                         <h3 class="text-xs font-bold text-slate-500 uppercase mb-2">Global Meals Served</h3>
                         <div class="text-7xl font-black text-slate-900 dark:text-white mb-2" id="food">0</div>
                     </div>
-                    <button id="inject-btn" onclick="app.serveFood()" class="w-full py-5 glow-btn-pro rounded-xl font-black text-sm transition-all hover:scale-[1.02]">INJECT_SCAN_EVENT()</button>
+                    <button id="inject-btn" onclick="app.serveFood()" aria-label="Serve food to next verified attendee" class="w-full py-5 glow-btn-pro rounded-xl font-black text-sm transition-all hover:scale-[1.02]">INJECT_SCAN_EVENT()</button>
                     
-                    <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-lg">
-                         <h4 class="text-red-700 dark:text-red-400 font-bold text-sm mb-1 uppercase">Strict Logic Locked</h4>
+                    <div role="alert" aria-live="assertive" class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-lg">
+                         <h4 class="text-red-700 dark:text-red-400 font-bold text-sm mb-1 uppercase">⚠️ Strict Logic Locked</h4>
                          <p class="text-xs text-red-600 dark:text-red-300 font-bold opacity-80">Cannot distribute more meals than recorded attendances in Gateway Log. Will auto-disable when capacity met.</p>
                     </div>
                 </div>
