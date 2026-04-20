@@ -52,6 +52,16 @@ Instead of relying on heavy manual backend processes, NexusEvent intelligently r
 - Google Cloud Buildpacks (Docker images)
 - Firebase SDK v10.11 modules
 
+## 🧪 Testing Strategy
+
+- **Automated test simulation implemented natively (`runTests()`)**
+- Full edge case coverage verified:
+  - Valid entry & ID format validation
+  - Strict Duplicate prevention (Block spoofing)
+  - Null/Empty input handling 
+  - Food validation (zero distribution limit without entry)
+- Built-in UI diagnostic proofs ("All test cases passed ✅").
+
 ---
 
 ## 🚦 How to Setup & Run Locally
