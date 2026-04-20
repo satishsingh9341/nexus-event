@@ -196,7 +196,7 @@
                             <h3 class="text-xs text-slate-500 font-bold uppercase mb-1">Gate 1 Verifications</h3>
                             <div class="badge-tag">SYNCED</div>
                         </div>
-                        <div class="text-7xl font-black text-slate-900 dark:text-white" id="att-count">0</div>
+                        <div class="text-7xl font-black text-slate-900 dark:text-white" id="entries">0</div>
                     </div>
                     
                     <div class="flex-1 cyber-card-elite p-0 bg-white dark:bg-[#111] flex flex-col" style="height: 300px;">
@@ -218,7 +218,7 @@
                 <div class="lg:col-span-1 space-y-6">
                     <div class="cyber-card-elite p-6 border-t-4 border-t-emerald-500 flex flex-col justify-center items-center text-center">
                         <h3 class="text-xs font-bold text-slate-500 uppercase mb-2">Global Meals Served</h3>
-                        <div class="text-7xl font-black text-slate-900 dark:text-white mb-2" id="total-meals">0</div>
+                        <div class="text-7xl font-black text-slate-900 dark:text-white mb-2" id="food">0</div>
                     </div>
                     <button id="inject-btn" onclick="app.serveFood()" class="w-full py-5 glow-btn-pro rounded-xl font-black text-sm transition-all hover:scale-[1.02]">INJECT_SCAN_EVENT()</button>
                     
@@ -244,7 +244,7 @@
         </div>
 
     </main>
-    <script src="script.js?v=4"></script>
+    <script type="module" src="script.js"></script>
     <script>
         document.getElementById('themeToggle').addEventListener('click', () => {
              document.documentElement.classList.toggle('dark');

@@ -1,4 +1,23 @@
-const app = {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+import { getPerformance, trace } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-performance.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAHpBM7wnmEEJwto3W_L7ozKV8kt1ALP2A",
+  authDomain: "nexus-event-system.firebaseapp.com",
+  projectId: "nexus-event-system",
+  storageBucket: "nexus-event-system.firebasestorage.app",
+  messagingSenderId: "161971451597",
+  appId: "1:161971451597:web:2093263fd9e77319d4db84"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const analytics = getAnalytics(firebaseApp);
+const perf = getPerformance(firebaseApp);
+
+window.app = {
     state: { role: null, attendance: 0, totalMeals: 0 },
     batches: [
         { id: 'Row A (Seats 1-10)', status: 'Active', served: 0, total: 10 },
@@ -18,6 +37,23 @@ const app = {
         if(navFeat) navFeat.addEventListener('click', () => this.switchTab('feature'));
         
         this.renderBatches();
+        this.setupLiveListeners();
+    },
+
+    setupLiveListeners() {
+        onSnapshot(collection(db, 'entries'), (snapshot) => {
+            this.state.attendance = snapshot.docs.length;
+            const attElem = document.getElementById('entries');
+            if (attElem) attElem.innerText = this.state.attendance;
+            this.updateFoodButtonState();
+        });
+
+        onSnapshot(collection(db, 'food'), (snapshot) => {
+            this.state.totalMeals = snapshot.docs.length;
+            const mealElem = document.getElementById('food');
+            if (mealElem) mealElem.innerText = this.state.totalMeals;
+            this.updateFoodButtonState();
+        });
     },
 
     login(role) {
@@ -69,16 +105,29 @@ const app = {
         new QRCode(qrContainer, { text: txt, width: 140, height: 140, colorDark: "#000", colorLight: "#fff", correctLevel: QRCode.CorrectLevel.H });
     },
 
-    simScan() {
-        this.state.attendance++;
-        document.getElementById('att-count').innerText = this.state.attendance;
+    async simScan() {
+        const perfTrace = trace(perf, 'qr_scan_time');
+        perfTrace.start();
+
         const logs = document.getElementById('logs');
         const empty = document.getElementById('empty-log');
         if(empty) empty.remove();
         const names = ["Aarav P.", "Riya S.", "Vikram J.", "Sneha R."];
         const time = new Date().toLocaleTimeString();
-        logs.innerHTML = `<div class="p-3 border-b border-slate-100 dark:border-slate-800"><span class="text-emerald-500 font-bold mr-2">✓ Gate 1 Access:</span> <span class="font-bold">${names[Math.floor(Math.random() * names.length)]}</span> <span class="float-right text-xs opacity-50">${time}</span></div>` + logs.innerHTML;
-        this.updateFoodButtonState();
+        
+        try {
+            await addDoc(collection(db, 'entries'), {
+                userId: "user_" + Date.now(),
+                type: "entry",
+                createdAt: serverTimestamp()
+            });
+            logEvent(analytics, "entry_marked", { userId: "mock_user" });
+            logs.innerHTML = `<div class="p-3 border-b border-slate-100 dark:border-slate-800"><span class="text-emerald-500 font-bold mr-2">✓ Gate 1 Access:</span> <span class="font-bold">\${names[Math.floor(Math.random() * names.length)]}</span> <span class="float-right text-xs opacity-50">\${time}</span></div>` + logs.innerHTML;
+        } catch (e) {
+            console.error("Firestore Error: ", e);
+        }
+
+        perfTrace.stop();
     },
 
     updateFoodButtonState() {
@@ -93,37 +142,51 @@ const app = {
         }
     },
 
-    serveFood() {
+    async serveFood() {
         if (this.state.totalMeals >= this.state.attendance) {
             alert("SYSTEM OVERRIDE BLOCKED ⛔\n\nCannot distribute food without attendee verification.\nThe number of meals (" + this.state.totalMeals + ") cannot exceed scanned check-ins (" + this.state.attendance + ").\n\nPlease ensure the student performs a Gate Check-in first.");
             return;
         }
 
+        const perfTrace = trace(perf, 'food_processing_time');
+        perfTrace.start();
+
         let activeIdx = this.batches.findIndex(b => b.status === 'Active');
-        if(activeIdx === -1) return; // all completed
-        
-        let batch = this.batches[activeIdx];
-        if (batch.served < batch.total) batch.served++;
-        this.state.totalMeals++;
-
-        // Threshold Logic: Standby Next Row
-        if (batch.served === 6 && activeIdx + 1 < this.batches.length) {
-            if(this.batches[activeIdx + 1].status === 'Blocked') {
-                this.batches[activeIdx + 1].status = 'Standby';
-            }
+        if(activeIdx === -1) {
+            perfTrace.stop();
+            return;
         }
         
-        // Completion
-        if (batch.served === batch.total) {
-            batch.status = 'Completed';
-            if (activeIdx + 1 < this.batches.length) {
-                this.batches[activeIdx + 1].status = 'Active';
+        try {
+            await addDoc(collection(db, 'food'), {
+                recordId: "food_" + Date.now(),
+                type: "food",
+                createdAt: serverTimestamp()
+            });
+            logEvent(analytics, "food_collected");
+            
+            let batch = this.batches[activeIdx];
+            if (batch.served < batch.total) batch.served++;
+
+            if (batch.served >= 6 && activeIdx + 1 < this.batches.length) {
+                if(this.batches[activeIdx + 1].status === 'Blocked') {
+                    this.batches[activeIdx + 1].status = 'Standby';
+                }
             }
+            
+            if (batch.served === batch.total) {
+                batch.status = 'Completed';
+                if (activeIdx + 1 < this.batches.length) {
+                    this.batches[activeIdx + 1].status = 'Active';
+                }
+            }
+            
+            this.renderBatches();
+        } catch(e) {
+            console.error("Food Logging Error: ", e);
         }
 
-        document.getElementById('total-meals').innerText = this.state.totalMeals;
-        this.updateFoodButtonState();
-        this.renderBatches();
+        perfTrace.stop();
     },
 
     renderBatches() {
@@ -172,4 +235,4 @@ const app = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => app.init());
+document.addEventListener('DOMContentLoaded', () => window.app.init());

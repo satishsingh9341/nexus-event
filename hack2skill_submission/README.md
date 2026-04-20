@@ -16,6 +16,12 @@ To comply with the Hack2Skill minimum size constraint and zero heavy-framework r
 - **Admin Command Center:** Real-time log tracking. Simulating optical scans increments live metrics.
 - **Smart Fuel Tracking:** Demonstrates exact batch processing metrics so food lines never exceed 15 people.
 
+## Google Services Integration
+- **Firebase Firestore** (real-time database)
+- **Firebase Analytics** (event tracking)
+- **Performance monitoring**
+- Live updates using `onSnapshot()`
+
 ## 📌 Assumptions Made
 1. **Database:** Operations have been mocked locally in memory to respect the "Zero backend requirement/Lightweight execution" constraints for MVP testing. 
 2. **Scanner Hardware:** The simulation button replicates what an actual volunteer's mobile web-cam query would hit via `/api/scan`.
